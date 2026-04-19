@@ -1,19 +1,5 @@
 # Sistema de Evaluaciones Distribuidas
 
-## Arquitectura (según diagrama)
-
-```
-[Usuario] → [Nginx:80] → [WildFly 1: Lógica :8080]
-                                   │
-                     ┌─────────────┼──────────────────┐
-                     │             │                    │
-               [ExamsPU]    [StudentsPU]         [RabbitMQ:5672]
-             [postgres-exams] [postgres-students]       │
-                                                  [WildFly 2: Datos :8081]
-                                                  [Consumer AMQP]
-                                                        │
-                                                  [JavaMail → Email]
-```
 
 ### Tecnologías (del diagrama de pizarrón)
 | Componente | Tecnología |
@@ -78,13 +64,13 @@ cd ../wildfly-app2-datos
 mvn clean package -DskipTests
 ```
 
-### 2. Configurar email (opcional)
+### 2. Configurar email 
 Editar `docker-compose.yml` y reemplazar:
 ```yaml
 MAIL_USER=tu-correo@gmail.com
 MAIL_PASS=tu-app-password-gmail
 ```
-> Para Gmail necesitas una **App Password** (no la contraseña normal).
+> Para Gmail necesitas una **App Password** 
 > Ve a: Cuenta Google → Seguridad → Verificación en 2 pasos → App passwords
 
 ### 3. Levantar todos los servicios
