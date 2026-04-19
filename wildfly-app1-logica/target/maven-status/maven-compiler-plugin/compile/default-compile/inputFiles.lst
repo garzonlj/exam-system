@@ -1,0 +1,12 @@
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\boundary\ExamResource.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\boundary\RestApplication.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\messaging\RabbitMQConnection.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\model\AnswerOption.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\model\Exam.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\model\ExamSubmission.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\model\Grade.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\model\Question.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\model\Student.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\model\StudentAnswer.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\service\ExamService.java
+C:\Users\jlaur\Downloads\exam-system\wildfly-app1-logica\src\main\java\com\exam\service\StudentService.java

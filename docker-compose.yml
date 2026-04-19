@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    networks:
+      - exam-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL DB1 - Exámenes (preguntas y respuestas)
+  postgres-exams:
+    image: postgres:15
+    container_name: postgres-exams
+    environment:
+      POSTGRES_DB: exams_db
+      POSTGRES_USER: exam_user
+      POSTGRES_PASSWORD: exam_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-exams-data:/var/lib/postgresql/data
+      - ./docker/init-exams.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - exam-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exam_user -d exams_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL DB2 - Estudiantes y notas
+  postgres-students:
+    image: postgres:15
+    container_name: postgres-students
+    environment:
+      POSTGRES_DB: students_db
+      POSTGRES_USER: student_user
+      POSTGRES_PASSWORD: student_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-students-data:/var/lib/postgresql/data
+      - ./docker/init-students.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - exam-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U student_user -d students_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # WildFly 1 - Lógica de Negocio
+  wildfly-logica:
+    build:
+      context: ./wildfly-app1-logica
+      dockerfile: Dockerfile
+    container_name: wildfly-logica
+    ports:
+      - "8080:8080"
+      - "9990:9990"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASS=admin123
+      - DB_EXAMS_HOST=postgres-exams
+      - DB_EXAMS_PORT=5432
+      - DB_EXAMS_NAME=exams_db
+      - DB_EXAMS_USER=exam_user
+      - DB_EXAMS_PASS=exam_pass
+      - DB_STUDENTS_HOST=postgres-students
+      - DB_STUDENTS_PORT=5432
+      - DB_STUDENTS_NAME=students_db
+      - DB_STUDENTS_USER=student_user
+      - DB_STUDENTS_PASS=student_pass
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres-exams:
+        condition: service_healthy
+      postgres-students:
+        condition: service_healthy
+    networks:
+      - exam-network
+
+  # WildFly 2 - Capa de Datos + Consumer RabbitMQ
+  wildfly-datos:
+    build:
+      context: ./wildfly-app2-datos
+      dockerfile: Dockerfile
+    container_name: wildfly-datos
+    ports:
+      - "8081:8080"
+      - "9991:9990"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASS=admin123
+      - DB_EXAMS_HOST=postgres-exams
+      - DB_EXAMS_PORT=5432
+      - DB_EXAMS_NAME=exams_db
+      - DB_EXAMS_USER=exam_user
+      - DB_EXAMS_PASS=exam_pass
+      - DB_STUDENTS_HOST=postgres-students
+      - DB_STUDENTS_PORT=5432
+      - DB_STUDENTS_NAME=students_db
+      - DB_STUDENTS_USER=student_user
+      - DB_STUDENTS_PASS=student_pass
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASS=${MAIL_PASS}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres-exams:
+        condition: service_healthy
+      postgres-students:
+        condition: service_healthy
+    networks:
+      - exam-network
+
+  # Frontend HTML
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - wildfly-logica
+    networks:
+      - exam-network
+
+volumes:
+  postgres-exams-data:
+  postgres-students-data:
+
+networks:
+  exam-network:
+    driver: bridge

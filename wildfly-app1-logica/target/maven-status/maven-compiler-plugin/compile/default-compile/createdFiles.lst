@@ -1,0 +1,12 @@
+com\exam\boundary\ExamResource.class
+com\exam\model\AnswerOption.class
+com\exam\model\Student.class
+com\exam\model\Grade.class
+com\exam\boundary\RestApplication.class
+com\exam\model\ExamSubmission.class
+com\exam\model\StudentAnswer.class
+com\exam\messaging\RabbitMQConnection.class
+com\exam\model\Exam.class
+com\exam\model\Question.class
+com\exam\service\ExamService.class
+com\exam\service\StudentService.class

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <!-- Unidad de persistencia para DB Exámenes -->
+    <persistence-unit name="ExamsPU" transaction-type="JTA">
+        <jta-data-source>java:/ExamsDS</jta-data-source>
+        <class>com.exam.model.Exam</class>
+        <class>com.exam.model.Question</class>
+        <class>com.exam.model.AnswerOption</class>
+        <class>com.exam.model.StudentAnswer</class>
+        <class>com.exam.model.ExamSubmission</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <!-- Hibernate como proveedor JPA -->
+            <property name="jakarta.persistence.provider"
+                      value="org.hibernate.jpa.HibernatePersistenceProvider"/>
+            <!-- Dialecto PostgreSQL -->
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <!-- Auto-validar esquema al iniciar -->
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+
+    <!-- Unidad de persistencia para DB Estudiantes -->
+    <persistence-unit name="StudentsPU" transaction-type="JTA">
+        <jta-data-source>java:/StudentsDS</jta-data-source>
+        <class>com.exam.model.Student</class>
+        <class>com.exam.model.Grade</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="jakarta.persistence.provider"
+                      value="org.hibernate.jpa.HibernatePersistenceProvider"/>
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

@@ -1,0 +1,5 @@
+com\exam\model\ExamSubmission.class
+com\exam\messaging\EmailService$1.class
+com\exam\messaging\ExamResultConsumer.class
+com\exam\messaging\EmailService.class
+com\exam\model\Grade.class

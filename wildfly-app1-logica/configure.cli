@@ -1,0 +1,9 @@
+embed-server --server-config=standalone.xml
+
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+
+data-source add --name=ExamsDS --jndi-name=java:/ExamsDS --driver-name=postgresql --connection-url=jdbc:postgresql://${env.DB_EXAMS_HOST:postgres-exams}:${env.DB_EXAMS_PORT:5432}/${env.DB_EXAMS_NAME:exams_db} --user-name=${env.DB_EXAMS_USER:exam_user} --password=${env.DB_EXAMS_PASS:exam_pass} --min-pool-size=2 --max-pool-size=10 --validate-on-match=true --background-validation=true --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker
+
+data-source add --name=StudentsDS --jndi-name=java:/StudentsDS --driver-name=postgresql --connection-url=jdbc:postgresql://${env.DB_STUDENTS_HOST:postgres-students}:${env.DB_STUDENTS_PORT:5433}/${env.DB_STUDENTS_NAME:students_db} --user-name=${env.DB_STUDENTS_USER:student_user} --password=${env.DB_STUDENTS_PASS:student_pass} --min-pool-size=2 --max-pool-size=10 --validate-on-match=true --background-validation=true --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker
+
+stop-embedded-server

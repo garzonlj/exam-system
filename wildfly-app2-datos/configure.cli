@@ -1,0 +1,15 @@
+embed-server --server-config=standalone.xml
+
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+
+data-source add --name=ExamsDS --jndi-name=java:/ExamsDS --driver-name=postgresql --connection-url=jdbc:postgresql://${env.DB_EXAMS_HOST:postgres-exams}:${env.DB_EXAMS_PORT:5432}/${env.DB_EXAMS_NAME:exams_db} --user-name=${env.DB_EXAMS_USER:exam_user} --password=${env.DB_EXAMS_PASS:exam_pass} --min-pool-size=2 --max-pool-size=10 --validate-on-match=true --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker
+
+data-source add --name=StudentsDS --jndi-name=java:/StudentsDS --driver-name=postgresql --connection-url=jdbc:postgresql://${env.DB_STUDENTS_HOST:postgres-students}:${env.DB_STUDENTS_PORT:5433}/${env.DB_STUDENTS_NAME:students_db} --user-name=${env.DB_STUDENTS_USER:student_user} --password=${env.DB_STUDENTS_PASS:student_pass} --min-pool-size=2 --max-pool-size=10 --validate-on-match=true --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker
+
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=mail-smtp:write-attribute(name=host,value=${env.MAIL_HOST:smtp.gmail.com})
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=mail-smtp:write-attribute(name=port,value=${env.MAIL_PORT:587})
+
+/subsystem=mail/mail-session=ExamMail:add(jndi-name=java:/mail/ExamMail)
+/subsystem=mail/mail-session=ExamMail/server=smtp:add(outbound-socket-binding-ref=mail-smtp,ssl=false,tls=true,username=${env.MAIL_USER:noreply@exam.edu.co},password=${env.MAIL_PASS:})
+
+stop-embedded-server
